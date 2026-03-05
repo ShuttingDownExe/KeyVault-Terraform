@@ -1,4 +1,8 @@
 data "azurerm_client_config" "current" {}
+data "azurerm_key_vault_certificate" "current" {
+  name = azurerm_key_vault_certificate.cert.name
+  key_vault_id = azurerm_key_vault.kv.id
+}
 
 resource "azurerm_key_vault" "kv" {
   name = var.keyvault_name
@@ -42,6 +46,10 @@ resource "azurerm_key_vault_certificate" "cert" {
       validity_in_months = 12
       key_usage = ["digitalSignature","keyEncipherment"]
       extended_key_usage = [ "1.3.6.1.5.5.7.3.2" ]
+    }
+    lifetime_action {
+      action {action_type = "AutoRenew"}
+      trigger {days_before_expiry = 30}
     }
   }
 }

@@ -1,4 +1,4 @@
 az keyvault secret download \
-   --vault-name travel-kv \
-   --name travel-api-cert \
+   --vault-name <Vault Name> \
+   --name <Secret Name> \
    --file cert.pfx
