@@ -1,0 +1,22 @@
+terraform {
+  required_providers {
+    azurerm = {
+        source = "hashicorp/azurerm"
+        version = "~>3.100"
+    }
+
+    azuread = {
+        source = "hashicorp/azuread"
+        version = "~>2.50"
+    }
+  }
+}
+
+provider "azurerm" {
+  skip_provider_registration = true
+  features {}
+}
+
+# provider "azuread" {}
+
+data "azurerm_client_config" "current" {}
