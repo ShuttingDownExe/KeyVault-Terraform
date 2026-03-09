@@ -11,9 +11,32 @@ resource "azurerm_key_vault" "kv" {
   tenant_id = data.azurerm_client_config.current.tenant_id
   sku_name = "premium"
   purge_protection_enabled = true
-  #soft_delete_retention_days = 90
-  public_network_access_enabled = true #REPLACE THIS WITH PRIVATE ENDPOINT
+  soft_delete_retention_days = 90
+  public_network_access_enabled = false #REPLACE THIS WITH PRIVATE ENDPOINT
   enable_rbac_authorization = true
+  
+}
+
+resource "azurerm_private_endpoint" "kv_pe" {
+  name                = "${var.keyvault_name}-pe"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.subnet_id
+
+  private_service_connection {
+    name                           = "${var.keyvault_name}-psc"
+    is_manual_connection            = false
+    private_connection_resource_id   = azurerm_key_vault.kv.id
+    subresource_names                = ["vault"]
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = var.private_dns_zone_id == null ? [] : [var.private_dns_zone_id]
+    content {
+      name                 = "default"
+      private_dns_zone_ids = [private_dns_zone_group.value]
+    }
+  }
 }
 
 resource "azurerm_role_assignment" "kv_admin" {

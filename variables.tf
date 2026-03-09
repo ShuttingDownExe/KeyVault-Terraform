@@ -15,3 +15,7 @@ variable "resource_group" {}
 variable "keyvault_name" {}
 variable "certificate_name" {}
 variable "app_name" {}
+variable "subnet_id" {}
+variable "private_dns_zone_id" {
+    default = null
+}

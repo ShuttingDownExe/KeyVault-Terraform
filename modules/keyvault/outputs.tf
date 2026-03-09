@@ -7,7 +7,7 @@ output "keyvault_id" {
 }
 
 output "certificate_end_date" {
-  value = data.azurerm_key_vault_certificate.current.end_date
+  value = data.azurerm_key_vault_certificate.current.expires
 }
 
 output "certificate_secret_id" {
