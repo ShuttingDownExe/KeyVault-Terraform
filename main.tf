@@ -1,5 +1,4 @@
 module "keyvault" {
-
   source = "./modules/keyvault"
 
   keyvault_name   = var.keyvault_name
@@ -14,7 +13,7 @@ module "identity" {
 
   source = "./modules/identity"
 
-  app_name              = var.app_name
+  app_client_id          = var.app_client_id
   keyvault_id           = module.keyvault.keyvault_id
   certificate_data      = module.keyvault.certificate_data_base64
   certificate_end_date  = module.keyvault.certificate_end_date

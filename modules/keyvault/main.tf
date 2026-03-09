@@ -39,17 +39,9 @@ resource "azurerm_private_endpoint" "kv_pe" {
   }
 }
 
-resource "azurerm_role_assignment" "kv_admin" {
-  scope = azurerm_key_vault.kv.id
-  role_definition_name = "Key Vault Administrator"
-  principal_id = data.azurerm_client_config.current.object_id
-  principal_type = "User"
-}
-
 resource "azurerm_key_vault_certificate" "cert" {
   name = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [ azurerm_role_assignment.kv_admin ]
 
   certificate_policy {
     issuer_parameters {

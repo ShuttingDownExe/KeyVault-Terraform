@@ -3,7 +3,7 @@ resource_group = "GAVL-DevOps-Tesing-RG"
 keyvault_name = "gavl-rsk-test-kv-1"
 certificate_name = "test-app-cert"
 
-app_name = "test-app"
+app_client_id = "730fd584-0f3c-4e41-9bbf-b3bbb0fba516"
 
 #PLEASE MODIFY THESE VALUES WITH THE OBJECT IDs OF USERS AND SERVICE PRINCIPALS
 
