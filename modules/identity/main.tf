@@ -41,3 +41,12 @@ resource "azurerm_role_assignment" "kv_secret_readers" {
   role_definition_name = "Key Vault Secrets User"
   principal_id         = each.value
 }
+
+resource "azurerm_role_assignment" "kv_certificate_officers" {
+
+  for_each = toset(var.kv_certificate_officers)
+
+  scope                = var.keyvault_id
+  role_definition_name = "Key Vault Certificate Officer"
+  principal_id         = each.value
+}
