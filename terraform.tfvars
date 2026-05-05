@@ -1,31 +1,29 @@
 location = "centralindia"
-resource_group = "GAVL-DevOps-Tesing-RG"
-keyvault_name = "gavl-rsk-test-kv-1"
-certificate_name = "test-app-cert"
+resource_group = "KeyVault-Test"
+keyvault_name = "rsk-test-kv-1"
+certificate_name = "app-cert"
 
-app_client_id = "730fd584-0f3c-4e41-9bbf-b3bbb0fba516"
+app_display_name = "kv-app-registration"
 
 #PLEASE MODIFY THESE VALUES WITH THE OBJECT IDs OF USERS AND SERVICE PRINCIPALS
 
 kv_admins = [
-  "b7462be6-5cf8-4c60-bd0d-820839012cc1",
-  "5c02f63b-078c-408a-8bca-dfa8cc3c1dfc"
+  "0f0d4f84-afdc-4096-8f01-c71b99f0cccc",
+  "009438f1-23eb-4cca-80fe-4844900ef1db"
 ]
 
 kv_secrets_officers = [
-  "b7462be6-5cf8-4c60-bd0d-820839012cc1",
-  "5c02f63b-078c-408a-8bca-dfa8cc3c1dfc"
+  "0f0d4f84-afdc-4096-8f01-c71b99f0cccc",
+  "009438f1-23eb-4cca-80fe-4844900ef1db"
 ]
 
 kv_secrets_readers = [ 
-  "b7462be6-5cf8-4c60-bd0d-820839012cc1",
-  "5c02f63b-078c-408a-8bca-dfa8cc3c1dfc"
+  "0f0d4f84-afdc-4096-8f01-c71b99f0cccc"
 ]
 
 kv_certificate_officers = [
-  "b7462be6-5cf8-4c60-bd0d-820839012cc1",
-  "5c02f63b-078c-408a-8bca-dfa8cc3c1dfc"
+  "0f0d4f84-afdc-4096-8f01-c71b99f0cccc"
 ]
 
-subnet_id = "/subscriptions/84f32968-136c-4b1c-89f3-953cf9f787a9/resourceGroups/GAVL-PROD-RG01/providers/Microsoft.Network/virtualNetworks/<VNET_NAME>/subnets/<SUBNET_NAME>"
-private_dns_zone_id = "/subscriptions/84f32968-136c-4b1c-89f3-953cf9f787a9/resourceGroups/GAVL-PROD-RG01/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net"
+subnet_id = "/subscriptions/5649c1ab-1980-41e5-b987-98fb878960ee/resourceGroups/KeyVault-Test/providers/Microsoft.Network/virtualNetworks/kv-vnet-vault/subnets/default"
+private_dns_zone_id = "/subscriptions/5649c1ab-1980-41e5-b987-98fb878960ee/resourceGroups/keyvault-test/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net"

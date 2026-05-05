@@ -12,9 +12,15 @@ resource "azurerm_key_vault" "kv" {
   sku_name = "premium"
   purge_protection_enabled = true
   soft_delete_retention_days = 90
-  public_network_access_enabled = false #REPLACE THIS WITH PRIVATE ENDPOINT
+  public_network_access_enabled = false
   enable_rbac_authorization = true
   
+}
+
+resource "azurerm_role_assignment" "current_principal_cert_officer" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Certificates Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_private_endpoint" "kv_pe" {
@@ -42,6 +48,7 @@ resource "azurerm_private_endpoint" "kv_pe" {
 resource "azurerm_key_vault_certificate" "cert" {
   name = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [azurerm_role_assignment.current_principal_cert_officer]
 
   certificate_policy {
     issuer_parameters {

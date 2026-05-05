@@ -13,7 +13,7 @@ module "identity" {
 
   source = "./modules/identity"
 
-  app_client_id          = var.app_client_id
+  app_display_name      = var.app_display_name
   keyvault_id           = module.keyvault.keyvault_id
   certificate_data      = module.keyvault.certificate_data_base64
   certificate_end_date  = module.keyvault.certificate_end_date
@@ -21,4 +21,5 @@ module "identity" {
   kv_admins            = var.kv_admins
   kv_secrets_officers   = var.kv_secrets_officers
   kv_secrets_readers    = var.kv_secrets_readers
+  kv_certificate_officers = var.kv_certificate_officers
 }

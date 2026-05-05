@@ -1,9 +1,13 @@
-data "azuread_service_principal" "sp" {
-  client_id = var.app_client_id
+resource "azuread_application" "app" {
+  display_name = var.app_display_name
+}
+
+resource "azuread_service_principal" "sp" {
+  client_id = azuread_application.app.client_id
 }
 
 resource "azuread_application_certificate" "cert" {
-  application_id = var.app_client_id
+  application_id = azuread_application.app.id
   type = "AsymmetricX509Cert"
   value    = var.certificate_data
   end_date = var.certificate_end_date
@@ -12,7 +16,7 @@ resource "azuread_application_certificate" "cert" {
 resource "azurerm_role_assignment" "app_kv_access" {
   scope                = var.keyvault_id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = data.azuread_service_principal.sp.object_id
+  principal_id         = azuread_service_principal.sp.object_id
 }
 
 resource "azurerm_role_assignment" "kv_admins" {
@@ -47,6 +51,6 @@ resource "azurerm_role_assignment" "kv_certificate_officers" {
   for_each = toset(var.kv_certificate_officers)
 
   scope                = var.keyvault_id
-  role_definition_name = "Key Vault Certificate Officer"
+  role_definition_name = "Key Vault Certificates Officer"
   principal_id         = each.value
 }

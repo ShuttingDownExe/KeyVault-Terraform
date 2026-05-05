@@ -1,9 +1,9 @@
-variable "app_client_id" {
+variable "app_display_name" {
 	type = string
 
 	validation {
-		condition = can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", var.app_client_id))
-		error_message = "app_client_id must be a valid application (client) ID in UUID format."
+		condition = length(trimspace(var.app_display_name)) > 0
+		error_message = "app_display_name must be a non-empty string."
 	}
 }
 variable "certificate_data" {}
@@ -48,7 +48,7 @@ variable "kv_certificate_officers"{
         condition = alltrue([
             for id in var.kv_certificate_officers : can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", id))
         ])
-        error_message = "kv_secrets_readers must contain only valid Entra object IDs (UUID format)."
+		error_message = "kv_certificate_officers must contain only valid Entra object IDs (UUID format)."
     }
 }
 
