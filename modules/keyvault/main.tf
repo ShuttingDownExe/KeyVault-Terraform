@@ -48,7 +48,10 @@ resource "azurerm_private_endpoint" "kv_pe" {
 resource "azurerm_key_vault_certificate" "cert" {
   name = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [azurerm_role_assignment.current_principal_cert_officer]
+  depends_on = [
+    azurerm_role_assignment.current_principal_cert_officer,
+    azurerm_private_endpoint.kv_pe
+  ]
 
   certificate_policy {
     issuer_parameters {
