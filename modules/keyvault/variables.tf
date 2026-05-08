@@ -18,3 +18,13 @@ variable "private_dns_zone_id" {
 		error_message = "private_dns_zone_id must be a full resource ID for privatelink.vaultcore.azure.net."
 	}
 }
+
+variable "private_endpoint_propagation_wait_seconds" {
+	type    = number
+	default = 120
+
+	validation {
+		condition     = var.private_endpoint_propagation_wait_seconds >= 0 && var.private_endpoint_propagation_wait_seconds <= 900
+		error_message = "private_endpoint_propagation_wait_seconds must be between 0 and 900."
+	}
+}

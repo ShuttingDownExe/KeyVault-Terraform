@@ -45,13 +45,19 @@ resource "azurerm_private_endpoint" "kv_pe" {
   }
 }
 
-resource "azurerm_key_vault_certificate" "cert" {
-  name = var.certificate_name
-  key_vault_id = azurerm_key_vault.kv.id
+resource "time_sleep" "wait_for_private_endpoint_propagation" {
   depends_on = [
     azurerm_role_assignment.current_principal_cert_officer,
     azurerm_private_endpoint.kv_pe
   ]
+
+  create_duration = "${var.private_endpoint_propagation_wait_seconds}s"
+}
+
+resource "azurerm_key_vault_certificate" "cert" {
+  name = var.certificate_name
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [time_sleep.wait_for_private_endpoint_propagation]
 
   certificate_policy {
     issuer_parameters {
