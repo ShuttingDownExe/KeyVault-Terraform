@@ -1,9 +1,9 @@
 location = "centralindia"
 resource_group = "key-vault-test"
-keyvault_name = "rsk-test-kv-1"
-certificate_name = "app-cert"
+keyvault_name = "rsk-test-kv-4"
+certificate_name = "app-cert-4"
 
-app_display_name = "kv-app-registration"
+app_display_name = "kv-app-registration-4"
 
 #PLEASE MODIFY THESE VALUES WITH THE OBJECT IDs OF USERS AND SERVICE PRINCIPALS
 

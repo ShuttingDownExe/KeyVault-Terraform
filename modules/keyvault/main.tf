@@ -54,6 +54,12 @@ resource "time_sleep" "wait_for_private_endpoint_propagation" {
   create_duration = "${var.private_endpoint_propagation_wait_seconds}s"
 }
 
+resource "random_password" "cert_password" {
+  length           = 24
+  special          = true
+  override_special = "!@#$" 
+}
+
 resource "azurerm_key_vault_certificate" "cert" {
   name = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
@@ -71,6 +77,9 @@ resource "azurerm_key_vault_certificate" "cert" {
     }
     secret_properties {
         content_type = "application/x-pkcs12"
+    }
+    export_properties {
+      password = random_password.cert_password.result
     }
     x509_certificate_properties {
       subject = "CN=${var.certificate_name}"
