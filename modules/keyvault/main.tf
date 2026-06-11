@@ -60,6 +60,12 @@ resource "random_password" "cert_password" {
   override_special = "!@#$" 
 }
 
+resource "azurerm_key_vault_secret" "cert-password" {
+  name = "cert-password"
+  value = random_password.cert_password.result
+  key_vault_id = azurerm_key_vault.kv.id
+}
+
 resource "azurerm_key_vault_certificate" "cert" {
   name = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
@@ -77,9 +83,6 @@ resource "azurerm_key_vault_certificate" "cert" {
     }
     secret_properties {
         content_type = "application/x-pkcs12"
-    }
-    export_properties {
-      password = random_password.cert_password.result
     }
     x509_certificate_properties {
       subject = "CN=${var.certificate_name}"

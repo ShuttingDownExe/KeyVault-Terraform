@@ -13,3 +13,7 @@ output "certificate_end_date" {
 output "certificate_secret_id" {
   value = data.azurerm_key_vault_certificate.current.secret_id
 }
+
+output "certificate_password_secret_uri" {
+  value = azurerm_key_vault_secret.cert-password.id
+}

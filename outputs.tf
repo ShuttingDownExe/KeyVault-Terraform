@@ -13,3 +13,7 @@ output "service_principal_object_id" {
 output "tenant_id" {
   value = data.azurerm_client_config.current.tenant_id
 }
+
+output "certificate_password_secret_uri" {
+  value = module.keyvault.certificate_password_secret_uri
+}
