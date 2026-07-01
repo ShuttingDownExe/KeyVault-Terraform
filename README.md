@@ -127,6 +127,11 @@ az keyvault secret download \
   --file cert.pfx
 ```
 
+```bash
+# Extract and repackage with a secure transport password
+openssl pkcs12 -in onprem_auth_blank.pfx -out onprem_auth_secure.pfx -password pass: -export -passout pass:YourSecureTransportPass123!
+```
+
 ## Troubleshooting Quick Notes
 
 1. `InvalidAuthenticationTokenTenant`:

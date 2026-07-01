@@ -1,8 +1,4 @@
 data "azurerm_client_config" "current" {}
-data "azurerm_key_vault_certificate" "current" {
-  name = azurerm_key_vault_certificate.cert.name
-  key_vault_id = azurerm_key_vault.kv.id
-}
 
 resource "azurerm_key_vault" "kv" {
   name = var.keyvault_name
@@ -14,12 +10,17 @@ resource "azurerm_key_vault" "kv" {
   soft_delete_retention_days = 90
   public_network_access_enabled = false
   enable_rbac_authorization = true
-  
 }
 
 resource "azurerm_role_assignment" "current_principal_cert_officer" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Certificates Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_role_assignment" "current_principal_secrets_officer" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets Officer"
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
@@ -64,6 +65,10 @@ resource "azurerm_key_vault_secret" "cert-password" {
   name = "cert-password"
   value = random_password.cert_password.result
   key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [
+    azurerm_role_assignment.current_principal_secrets_officer,
+    time_sleep.wait_for_private_endpoint_propagation
+  ]
 }
 
 resource "azurerm_key_vault_certificate" "cert" {
