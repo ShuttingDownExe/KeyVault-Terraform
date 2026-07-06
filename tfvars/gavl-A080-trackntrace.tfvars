@@ -8,7 +8,7 @@ app_display_name = "gavl-a080-tnt-ar"
 #PLEASE MODIFY THESE VALUES WITH THE OBJECT IDs OF USERS AND SERVICE PRINCIPALS
 
 kv_admins = [
-  "0f0d4f84-afdc-4096-8f01-c71b99f0cccc",
+  "334ba4fc-19d3-4c8a-b09d-2dad96557e24",
   "b7462be6-5cf8-4c60-bd0d-820839012cc1"
 ]
 
@@ -18,7 +18,7 @@ kv_secrets_officers = [
 ]
 
 kv_secrets_readers = [ 
-  "CHANGE"
+  "51a2b163-28a8-424e-bab3-b954e7427a1f"
 ]
 
 kv_certificate_officers = [
