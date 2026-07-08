@@ -9,7 +9,7 @@ resource "azurerm_key_vault" "kv" {
   purge_protection_enabled = true
   soft_delete_retention_days = 90
   public_network_access_enabled = false
-  rbac_authorization_enabled = true
+  enable_rbac_authorization = true
 }
 
 resource "azurerm_role_assignment" "current_principal_cert_officer" {

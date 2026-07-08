@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-    resource_group_name = " GAVL-KeyVault-State-RG"
-    storage_account_name = "gavlkvstate"
+    resource_group_name = "GAVL-KeyVault-State-RG"
+    storage_account_name = "gavlkvstatesa"
     container_name = "gavlterraformstatefile"
-    key = "<APP>-kv.tfstate"
+    key = "default-kv.tfstate"
   }
 }
