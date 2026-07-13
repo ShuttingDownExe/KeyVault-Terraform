@@ -46,10 +46,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
+      - name: Install Terraform
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/bin"
+          curl -fsSLo /tmp/terraform.zip "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+          unzip -o /tmp/terraform.zip -d "$HOME/bin"
+          chmod +x "$HOME/bin/terraform"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Check Terraform version
+        run: terraform version
 
       - name: Terraform format check
         run: terraform fmt -check -recursive
