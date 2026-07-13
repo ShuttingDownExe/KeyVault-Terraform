@@ -1,15 +1,15 @@
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-  name = var.keyvault_name
-  location = var.location
-  resource_group_name = var.resource_group
-  tenant_id = data.azurerm_client_config.current.tenant_id
-  sku_name = "premium"
-  purge_protection_enabled = true
-  soft_delete_retention_days = 90
+  name                          = var.keyvault_name
+  location                      = var.location
+  resource_group_name           = var.resource_group
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  sku_name                      = "premium"
+  purge_protection_enabled      = true
+  soft_delete_retention_days    = 90
   public_network_access_enabled = false
-  enable_rbac_authorization = true
+  enable_rbac_authorization     = true
 }
 
 resource "azurerm_role_assignment" "current_principal_cert_officer" {
@@ -32,9 +32,9 @@ resource "azurerm_private_endpoint" "kv_pe" {
 
   private_service_connection {
     name                           = "${var.keyvault_name}-psc"
-    is_manual_connection            = false
-    private_connection_resource_id   = azurerm_key_vault.kv.id
-    subresource_names                = ["vault"]
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_key_vault.kv.id
+    subresource_names              = ["vault"]
   }
 
   dynamic "private_dns_zone_group" {
@@ -58,12 +58,12 @@ resource "time_sleep" "wait_for_private_endpoint_propagation" {
 resource "random_password" "cert_password" {
   length           = 24
   special          = true
-  override_special = "!@#$" 
+  override_special = "!@#$"
 }
 
 resource "azurerm_key_vault_secret" "cert-password" {
-  name = "cert-password"
-  value = random_password.cert_password.result
+  name         = "cert-password"
+  value        = random_password.cert_password.result
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [
     azurerm_role_assignment.current_principal_secrets_officer,
@@ -72,32 +72,32 @@ resource "azurerm_key_vault_secret" "cert-password" {
 }
 
 resource "azurerm_key_vault_certificate" "cert" {
-  name = var.certificate_name
+  name         = var.certificate_name
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [time_sleep.wait_for_private_endpoint_propagation]
+  depends_on   = [time_sleep.wait_for_private_endpoint_propagation]
 
   certificate_policy {
     issuer_parameters {
-        name = "Self"
+      name = "Self"
     }
     key_properties {
-        exportable = true
-        key_size = 4096
-        key_type = "RSA"
-        reuse_key = true
+      exportable = true
+      key_size   = 4096
+      key_type   = "RSA"
+      reuse_key  = true
     }
     secret_properties {
-        content_type = "application/x-pkcs12"
+      content_type = "application/x-pkcs12"
     }
     x509_certificate_properties {
-      subject = "CN=${var.certificate_name}"
+      subject            = "CN=${var.certificate_name}"
       validity_in_months = 12
-      key_usage = ["digitalSignature","keyEncipherment"]
-      extended_key_usage = [ "1.3.6.1.5.5.7.3.2" ]
+      key_usage          = ["digitalSignature", "keyEncipherment"]
+      extended_key_usage = ["1.3.6.1.5.5.7.3.2"]
     }
     lifetime_action {
-      action {action_type = "AutoRenew"}
-      trigger {days_before_expiry = 30}
+      action { action_type = "AutoRenew" }
+      trigger { days_before_expiry = 30 }
     }
   }
 }

@@ -8,9 +8,9 @@ resource "azuread_service_principal" "sp" {
 
 resource "azuread_application_certificate" "cert" {
   application_id = azuread_application.app.id
-  type = "AsymmetricX509Cert"
-  value    = var.certificate_data
-  end_date = var.certificate_end_date
+  type           = "AsymmetricX509Cert"
+  value          = var.certificate_data
+  end_date       = var.certificate_end_date
 }
 
 resource "azurerm_role_assignment" "app_kv_access" {
