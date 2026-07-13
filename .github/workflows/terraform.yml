@@ -68,39 +68,59 @@ jobs:
       - name: Terraform validate
         run: terraform validate
 
-      - name: Azure login
+      - name: Determine Azure auth availability
+        id: azure_auth
         if: github.event_name == 'workflow_dispatch' && (inputs.action == 'plan' || inputs.action == 'apply')
+        shell: bash
+        run: |
+          set -euo pipefail
+          client_id="${{ secrets.AZURE_CLIENT_ID || vars.AZURE_CLIENT_ID }}"
+          tenant_id="${{ secrets.AZURE_TENANT_ID || vars.AZURE_TENANT_ID }}"
+          subscription_id="${{ secrets.AZURE_SUBSCRIPTION_ID || vars.AZURE_SUBSCRIPTION_ID }}"
+
+          if [ -n "$client_id" ] && [ -n "$tenant_id" ] && [ -n "$subscription_id" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "client_id=$client_id" >> "$GITHUB_OUTPUT"
+            echo "tenant_id=$tenant_id" >> "$GITHUB_OUTPUT"
+            echo "subscription_id=$subscription_id" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Azure credentials are not fully configured. Skipping Azure login and deployment steps."
+          fi
+
+      - name: Azure login
+        if: github.event_name == 'workflow_dispatch' && (inputs.action == 'plan' || inputs.action == 'apply') && steps.azure_auth.outputs.enabled == 'true'
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ steps.azure_auth.outputs.client_id }}
+          tenant-id: ${{ steps.azure_auth.outputs.tenant_id }}
+          subscription-id: ${{ steps.azure_auth.outputs.subscription_id }}
 
       - name: Terraform init for deployment
-        if: github.event_name == 'workflow_dispatch' && (inputs.action == 'plan' || inputs.action == 'apply')
+        if: github.event_name == 'workflow_dispatch' && (inputs.action == 'plan' || inputs.action == 'apply') && steps.azure_auth.outputs.enabled == 'true'
         env:
           ARM_USE_OIDC: true
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ steps.azure_auth.outputs.client_id }}
+          ARM_TENANT_ID: ${{ steps.azure_auth.outputs.tenant_id }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure_auth.outputs.subscription_id }}
         run: terraform init -input=false
 
       - name: Terraform plan
-        if: github.event_name == 'workflow_dispatch' && inputs.action == 'plan'
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'plan' && steps.azure_auth.outputs.enabled == 'true'
         env:
           ARM_USE_OIDC: true
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ steps.azure_auth.outputs.client_id }}
+          ARM_TENANT_ID: ${{ steps.azure_auth.outputs.tenant_id }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure_auth.outputs.subscription_id }}
         run: |
           terraform plan -input=false -lock=false -var-file="tfvars/${{ inputs.tfvars_file }}"
 
       - name: Terraform apply
-        if: github.event_name == 'workflow_dispatch' && inputs.action == 'apply'
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'apply' && steps.azure_auth.outputs.enabled == 'true'
         env:
           ARM_USE_OIDC: true
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ steps.azure_auth.outputs.client_id }}
+          ARM_TENANT_ID: ${{ steps.azure_auth.outputs.tenant_id }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure_auth.outputs.subscription_id }}
         run: |
           terraform apply -auto-approve -input=false -var-file="tfvars/${{ inputs.tfvars_file }}"
