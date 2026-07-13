@@ -52,7 +52,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Setup Azure CLI
-        uses: azure/azure-cli@v2
+        uses: azure/azure-cli@v2.0.0
 
       - name: Check tool versions
         run: |
